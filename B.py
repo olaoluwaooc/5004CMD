@@ -1,62 +1,31 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 
+# load the dataset
+df = pd.read_csv('Trips_by_Distance.csv')
 
-# GLOBAL SETTINGS
-plt.rcParams["figure.figsize"] = (14, 7)
+# convert the ate column
+df['Date'] = pd.to_datetime(df['Date'])
 
+# filter conditions for >10,000,000 trips
+trips_10_25 = df[df['Number of Trips 10-25'] > 10_000_000]
+trips_50_100 = df[df['Number of Trips 50-100'] > 10_000_000]
 
-# CREATE PLOTS FOLDER
-if not os.path.exists("plots"):
-    os.makedirs("plots")
-
-
-# LOAD DATASET
-big_dataset = pd.read_csv("Trips_Full Data.csv", parse_dates=['Date'])
-
-
-# FILTER NATIONAL DATA
-national = big_dataset[big_dataset['Level'] == "National"]
-
-
-# FILTER CONDITIONS 
-set1 = national[national['Trips 10-25 Miles'] > 10000000]
-set2 = national[national['Trips 50-100 Miles'] > 10000000]
-
-
-# PLOT 1: 10–25 MILES
+# plot the Scatter plot
 plt.figure()
-plt.scatter(set1['Date'], set1['Trips 10-25 Miles'])
 
-plt.title("Q1(b): Trips 10–25 Miles (>10M)", fontsize=14)
-plt.xlabel("Date")
-plt.ylabel("Number of Trips")
+plt.scatter(trips_10_25['Date'], trips_10_25['Number of Trips 10-25'], label='10-25 miles')
+plt.scatter(trips_50_100['Date'], trips_50_100['Number of Trips 50-100'], label='50-100 miles')
+
+# create the labels and title
+plt.xlabel('Date')
+plt.ylabel('Number of Trips')
+plt.title('Trips >10M: 10–25 miles vs 50–100 miles')
+plt.legend()
+
 plt.xticks(rotation=45)
-plt.grid(alpha=0.4)
 plt.tight_layout()
-
-plt.savefig("plots/Q1b_trips_10_25.png", dpi=300, bbox_inches="tight")
-plt.show()
-
-
-# PLOT 2: 50–100 MILES
-plt.figure()
-plt.scatter(set2['Date'], set2['Trips 50-100 Miles'])
-
-plt.title("Q1(b): Trips 50–100 Miles (>10M)", fontsize=14)
-plt.xlabel("Date")
-plt.ylabel("Number of Trips")
-plt.xticks(rotation=45)
-plt.grid(alpha=0.4)
-plt.tight_layout()
-
-plt.savefig("plots/Q1b_trips_50_100.png", dpi=300, bbox_inches="tight")
-plt.show()
-
-
-# PLOT 3: COMPARISON
-plt.figure()
+plt.show()plt.figure()
 
 plt.scatter(set1['Date'], set1['Trips 10-25 Miles'], label='10-25 Miles')
 plt.scatter(set2['Date'], set2['Trips 50-100 Miles'], label='50-100 Miles')
