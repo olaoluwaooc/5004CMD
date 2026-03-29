@@ -25,18 +25,4 @@ plt.legend()
 
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.show()plt.figure()
-
-plt.scatter(set1['Date'], set1['Trips 10-25 Miles'], label='10-25 Miles')
-plt.scatter(set2['Date'], set2['Trips 50-100 Miles'], label='50-100 Miles')
-
-plt.title("Q1(b): Comparison of High Volume Trips", fontsize=14)
-plt.xlabel("Date")
-plt.ylabel("Number of Trips")
-plt.xticks(rotation=45)
-plt.legend()
-plt.grid(alpha=0.4)
-plt.tight_layout()
-
-plt.savefig("plots/Q1b_comparison.png", dpi=300, bbox_inches="tight")
 plt.show()
