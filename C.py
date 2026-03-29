@@ -1,51 +1,76 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
-import os
+import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
-plt.rcParams["figure.figsize"] = (14, 7)
+# load the dataset
+df = pd.read_csv('Trips_by_Distance.csv')
 
-if not os.path.exists("plots"):
-    os.makedirs("plots")
+# create the average distance
+dist_cols = [
+    ('Number of Trips <1', 0.5),
+    ('Number of Trips 1-3', 2),
+    ('Number of Trips 3-5', 4),
+    ('Number of Trips 5-10', 7.5),
+    ('Number of Trips 10-25', 17.5),
+    ('Number of Trips 25-50', 37.5),
+    ('Number of Trips 50-100', 75),
+    ('Number of Trips 100-250', 175),
+    ('Number of Trips 250-500', 375),
+    ('Number of Trips >=500', 600)
+]
 
-# Load data
-big_dataset = pd.read_csv("Trips_Full Data.csv", parse_dates=['Date'])
+def avg_distance(row):
+    total = 0
+    trips = 0
+    for col, mid in dist_cols:
+        total += row[col] * mid
+        trips += row[col]
+    return total / trips if trips != 0 else 0
 
-# Clean column names
-big_dataset.columns = big_dataset.columns.str.strip()
+df['Avg_Distance'] = df.apply(avg_distance, axis=1)
 
-# Filter national data
-national = big_dataset[big_dataset['Level'] == "National"]
+# prepare the data 
+df_model = df[['Avg_Distance', 'Number of Trips']].dropna()
 
-# AUTO-DETECT COLUMNS
-print(national.columns.tolist())
+X = df_model[['Avg_Distance']]
+y = df_model['Number of Trips']
 
-col_10_25 = [col for col in national.columns if "10-25" in col][0]
-col_50_100 = [col for col in national.columns if "50-100" in col][0]
-
-print("Using:", col_10_25, "and", col_50_100)
-
-# Model data
-X = np.array(national[col_10_25]).reshape(-1, 1)
-y = np.array(national[col_50_100]).reshape(-1, 1)
-
-# Train model
+# train the model 
 model = LinearRegression()
 model.fit(X, y)
 
-# Predict
+# predictions
 y_pred = model.predict(X)
 
-# Evaluate
+# metrics 
 rmse = np.sqrt(mean_squared_error(y, y_pred))
 r2 = r2_score(y, y_pred)
 
 print("RMSE:", rmse)
 print("R²:", r2)
 
-# Plot
+# scatterplot
+plt.figure()
+plt.scatter(X, y)
+plt.plot(X, y_pred)
+plt.xlabel('Average Distance (miles)')
+plt.ylabel('Number of Trips')
+plt.title('Distance vs Travel Frequency')
+plt.tight_layout()
+plt.show()
+# predict
+y_pred = model.predict(X)
+
+# evaluate
+rmse = np.sqrt(mean_squared_error(y, y_pred))
+r2 = r2_score(y, y_pred)
+
+print("RMSE:", rmse)
+print("R²:", r2)
+
+# plot the scatter plot
 plt.figure()
 plt.scatter(X, y, label="Actual Data")
 plt.plot(X, y_pred, label="Regression Line")
