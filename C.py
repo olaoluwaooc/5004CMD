@@ -60,27 +60,4 @@ plt.ylabel('Number of Trips')
 plt.title('Distance vs Travel Frequency')
 plt.tight_layout()
 plt.show()
-# predict
-y_pred = model.predict(X)
 
-# evaluate
-rmse = np.sqrt(mean_squared_error(y, y_pred))
-r2 = r2_score(y, y_pred)
-
-print("RMSE:", rmse)
-print("R²:", r2)
-
-# plot the scatter plot
-plt.figure()
-plt.scatter(X, y, label="Actual Data")
-plt.plot(X, y_pred, label="Regression Line")
-
-plt.title("Q1(c): Regression – Trip Distance vs Frequency")
-plt.xlabel(col_10_25)
-plt.ylabel(col_50_100)
-plt.legend()
-plt.grid(alpha=0.4)
-plt.tight_layout()
-
-plt.savefig("plots/Q1c_regression.png", dpi=300, bbox_inches="tight")
-plt.show()
