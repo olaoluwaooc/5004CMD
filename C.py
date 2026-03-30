@@ -1,63 +1,43 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
+import numpy as np
 
-# load the dataset
+# Load the dataset
 df = pd.read_csv('Trips_by_Distance.csv')
 
-# create the average distance
-dist_cols = [
-    ('Number of Trips <1', 0.5),
-    ('Number of Trips 1-3', 2),
-    ('Number of Trips 3-5', 4),
-    ('Number of Trips 5-10', 7.5),
-    ('Number of Trips 10-25', 17.5),
-    ('Number of Trips 25-50', 37.5),
-    ('Number of Trips 50-100', 75),
-    ('Number of Trips 100-250', 175),
-    ('Number of Trips 250-500', 375),
-    ('Number of Trips >=500', 600)
-]
+# Choose the distance category
+X = df[['Number of Trips 10-25']]   
+y = df['Number of Trips']           
 
-def avg_distance(row):
-    total = 0
-    trips = 0
-    for col, mid in dist_cols:
-        total += row[col] * mid
-        trips += row[col]
-    return total / trips if trips != 0 else 0
+# Remove the missing values
+data = pd.concat([X, y], axis=1).dropna()
+X = data[['Number of Trips 10-25']]
+y = data['Number of Trips']
 
-df['Avg_Distance'] = df.apply(avg_distance, axis=1)
-
-# prepare the data 
-df_model = df[['Avg_Distance', 'Number of Trips']].dropna()
-
-X = df_model[['Avg_Distance']]
-y = df_model['Number of Trips']
-
-# train the model 
+# Train the model
 model = LinearRegression()
 model.fit(X, y)
 
-# predictions
+# Predict
 y_pred = model.predict(X)
 
-# metrics 
+# Metrics
 rmse = np.sqrt(mean_squared_error(y, y_pred))
 r2 = r2_score(y, y_pred)
 
 print("RMSE:", rmse)
 print("R²:", r2)
 
-# scatterplot
+# Scatterplot
 plt.figure()
 plt.scatter(X, y)
 plt.plot(X, y_pred)
-plt.xlabel('Average Distance (miles)')
-plt.ylabel('Number of Trips')
-plt.title('Distance vs Travel Frequency')
+
+plt.xlabel('Trips (10–25 miles)')
+plt.ylabel('Total Number of Trips')
+plt.title('Travel Frequency vs Trip Length (10–25 miles)')
+
 plt.tight_layout()
 plt.show()
-
