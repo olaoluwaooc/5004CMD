@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # load the dataset
 df = pd.read_csv('Trips_by_Distance.csv')
 
-# sum the total trips for each distance category
+# sum of the total trips for each distance category
 distance_totals = {
     '<1 mile': df['Number of Trips <1'].sum(),
     '1–3 miles': df['Number of Trips 1-3'].sum(),
